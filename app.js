@@ -10,7 +10,7 @@ function hand(holeCards, comCards) {
     suits.forEach(suit => {
         suit.consecutiveRanks = findConsecutiveRanks(suit);          
     });
-    findWinningHands();
+    return findWinningHands();
 }
 
 function countCards(cards) {
@@ -44,29 +44,33 @@ function findWinningHands() {
         suit.consecutiveRanks = findConsecutiveRanks(suit);
     });
     if (straightFlushChecker()) {
-        return;
+        return printWinner("Straight-Flush");                    
     }
     let suitSameRanks = sameRankCounter();
     switch(suitSameRanks) {
         case 4:
-            printWinner("Four-of-a-Kind");
-            return;
+            return printWinner("Four-of-a-Kind");
         case 3:
-            if (fullHouseChecker() || flushChecker() || straightChecker()) {
-                return;
+            if (fullHouseChecker()) {
+                return printWinner("Full House");
+            } else if (flushChecker()) {
+                return printWinner("Flush");                   
+            } else if (straightChecker()) {
+                return printWinner("Straight");
             } else {
-                printWinner("Three-of-a-Kind");
-                return;
+                return printWinner("Three-of-a-Kind");
             }
         case 2:
-            printWinner("Pair");
-            return;
+            return printWinner("Pair");
         default:
             break;
     }
-    if (flushChecker() || straightChecker()) {
-        return;
+    if (flushChecker()) {
+        return printWinner("Flush");                   
+    } else if (straightChecker()) {
+        return printWinner("Straight");
     }
+    return printWinner("High Card")
 }
 
 function straightFlushChecker() {
@@ -74,7 +78,6 @@ function straightFlushChecker() {
     for(let index = 0; index < suits.length; index++) {
         if (suits[index].total > 4) {
             if (suits[index].consecutiveRanks.length > 4) {
-                printWinner("Straight-Flush");                    
                 return true;
             }
         }
@@ -113,7 +116,6 @@ function fullHouseChecker() {
         }
     });
     if ( threeOfASuit && threeOfASuit) {
-        printWinner("Full House");
         return true;               
     }
     return false;
@@ -123,7 +125,6 @@ function flushChecker() {
     let suits = [clubs, diamonds, hearts, spades];
     suits.forEach(suit => {
         if (suit.total > 4) {                
-            printWinner("Flush");                    
             return true;                
         }
     });
@@ -133,7 +134,6 @@ function flushChecker() {
 function straightChecker() {
     let consecutiveRanks = sortByRank();
     if (consecutiveRanks.length > 4) {
-        printWinner("Straight");
         return true;
     }
     return false;
@@ -223,5 +223,21 @@ function sortByRank() {
 function printWinner(type) {
     const ranksList = sortByRank();
     const ranks = [...new Set(ranksList)];
-    console.log({type:type, ranks});
+    return {type:type, ranks};
+}
+
+module.exports = {
+    hand,
+    countCards,
+    findWinningHands,
+    straightFlushChecker,
+    sameRankCounter,
+    fullHouseChecker,
+    flushChecker,
+    straightChecker,
+    findConsecutiveRanks,
+    convertRanksToSortedNumericalList,
+    convertNumericalRankToSymbol,
+    sortByRank,
+    printWinner
 }

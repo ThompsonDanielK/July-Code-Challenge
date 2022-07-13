@@ -1,0 +1,23 @@
+{
+  "name": "july-code-challenge",
+  "version": "1.0.0",
+  "description": "A coding challenge submitted for RevLocal's July Coding Challenge. The script analyzes a poker hand and returns the best hand possible out of the cards given.",
+  "main": "app.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThompsonDanielK/July-Code-Challenge.git"
+  },
+  "author": "Dan Thompson",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThompsonDanielK/July-Code-Challenge/issues"
+  },
+  "homepage": "https://github.com/ThompsonDanielK/July-Code-Challenge#readme",
+  "type": "module",
+  "devDependencies": {
+    "jest": "^28.1.3"
+  }
+}
