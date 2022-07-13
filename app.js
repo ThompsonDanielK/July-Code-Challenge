@@ -140,8 +140,7 @@ function straightChecker() {
 }
 
 function findConsecutiveRanks(cards) {
-    let consecutiveRanks = [];
-    // let previousRank;        
+    let consecutiveRanks = [];    
     let sortedNumericalRankList = convertRanksToSortedNumericalList(cards);
     for (let index = 0; index < sortedNumericalRankList.length; index++) {
         if (index == sortedNumericalRankList.length - 1 && parseInt(sortedNumericalRankList[index - 1]) == parseInt(sortedNumericalRankList[index]) - 1) {
