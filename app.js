@@ -1,72 +1,65 @@
-let spades = {};
-let hearts = {};
-let clubs = {};
-let diamonds = {};
-
 function hand(holeCards, comCards) {
-    spades = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
-    hearts = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
-    clubs = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
-    diamonds = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
+    const suit = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
     const allCards = holeCards.concat(comCards);
-    countCards(allCards);
-    let suits = [clubs, diamonds, hearts, spades];
-    suits.forEach(suit => {
-        const sortedNumericalRankList = convertRanksToSortedNumericalList(suit);
-        suit.consecutiveRanks = findConsecutiveRanks(sortedNumericalRankList);          
+    let handSortedBySuit = {clubs:{...suit}, diamonds:{...suit}, hearts:{...suit}, spades:{...suit}};
+    handSortedBySuit = countCards(allCards, handSortedBySuit);
+    Object.keys(handSortedBySuit).forEach(suit => {
+        const sortedNumericalRankList = convertRanksToSortedNumericalList(handSortedBySuit[suit]);
+        handSortedBySuit[suit].consecutiveRanks = findConsecutiveRanks(sortedNumericalRankList);          
     });
-    return findWinningHands();
+    return findWinningHands(handSortedBySuit);
 }
 
-function countCards(cards) {
+function countCards(cards, handSortedBySuit) {
     cards.forEach(card => {
         const suit = card[card.length - 1];
         const rank = card.substring(0, card.length - 1);
         switch(suit) {
             case "♦":
-                diamonds[rank]++;
-                diamonds.total++;
+                handSortedBySuit.diamonds[rank]++;
+                handSortedBySuit.diamonds.total++;
                 break;
             case "♣":
-                clubs[rank]++;
-                clubs.total++;
+                handSortedBySuit.clubs[rank]++;
+                handSortedBySuit.clubs.total++;
                 break;
             case "♥":
-                hearts[rank]++;
-                hearts.total++;
+                handSortedBySuit.hearts[rank]++;
+                handSortedBySuit.hearts.total++;
                 break;
             case "♠":
-                spades[rank]++;
-                spades.total++;
+                handSortedBySuit.spades[rank]++;
+                handSortedBySuit.spades.total++;
                 break;
         }
     });
+    return handSortedBySuit;
 }
 
-function findWinningHands() {
-    if (straightFlushChecker()) {
-        return printWinner("Straight-Flush");                    
+function findWinningHands(handSortedBySuit) {
+    if (straightFlushChecker(handSortedBySuit)) {
+        return printWinner("Straight-Flush", handSortedBySuit);                    
     }
-    const suitSameRanks = sameRankCounter();
+    const suitSameRanks = sameRankCounter(handSortedBySuit);
     const highestNumberOfSameRanks = Math.max(...suitSameRanks);
     switch(highestNumberOfSameRanks) {
         case 4:
-            return printWinner("Four-of-a-Kind");
+            return printWinner("Four-of-a-Kind", handSortedBySuit);
         case 3:
             if (fullHouseChecker(suitSameRanks)) {
-                return printWinner("Full House");
-            } else if (flushChecker()) {
-                return printWinner("Flush");                   
-            } else if (straightChecker()) {
-                return printWinner("Straight");
+                return printWinner("Full House", handSortedBySuit);
+            } else if (flushChecker(handSortedBySuit)) {
+                return printWinner("Flush", handSortedBySuit);                   
+            } else if (straightChecker(handSortedBySuit)) {
+                return printWinner("Straight", handSortedBySuit);
             } else {
-                return printWinner("Three-of-a-Kind");
+                return printWinner("Three-of-a-Kind", handSortedBySuit);
             }
         case 2:
-            if (flushChecker()) {
-                return printWinner("Flush");                   
-            } else if (straightChecker()) {
-                return printWinner("Straight");
+            if (flushChecker(handSortedBySuit)) {
+                return printWinner("Flush", handSortedBySuit);                   
+            } else if (straightChecker(handSortedBySuit)) {
+                return printWinner("Straight", handSortedBySuit);
             } else {
                 if (suitSameRanks.length > 1) {
                     let numberOfPairs = 0;
@@ -75,29 +68,29 @@ function findWinningHands() {
                             numberOfPairs++;
                         }
                         if (numberOfPairs > 1) {
-                            return printWinner("Two Pair");
+                            return printWinner("Two Pair", handSortedBySuit);
                         }
                     }
                 } else {
-                    return printWinner("Pair");
+                    return printWinner("Pair", handSortedBySuit);
                 }
             }
         default:
             break;
     }
-    if (flushChecker()) {
-        return printWinner("Flush");                   
-    } else if (straightChecker()) {
-        return printWinner("Straight");
+    if (flushChecker(handSortedBySuit)) {
+        return printWinner("Flush", handSortedBySuit);                   
+    } else if (straightChecker(handSortedBySuit)) {
+        return printWinner("Straight", handSortedBySuit);
     }
-    return printWinner("High Card")
+    return printWinner("High Card", handSortedBySuit);
 }
 
-function straightFlushChecker() {
-    let suits = [clubs, diamonds, hearts, spades];
-    for(let index = 0; index < suits.length; index++) {
-        if (suits[index].total > 4) {
-            if (suits[index].consecutiveRanks.length > 4) {
+function straightFlushChecker(handSortedBySuit) {
+    const keys = Object.keys(handSortedBySuit);
+    for(let index = 0; index < keys.length; index++) {
+        if (handSortedBySuit[keys[index]].total > 4) {
+            if (handSortedBySuit[keys[index]].consecutiveRanks.length > 4) {
                 return true;
             }
         }
@@ -105,17 +98,19 @@ function straightFlushChecker() {
     return false;
 }
 
-function sameRankCounter() {
+function sameRankCounter(handSortedBySuit) {
+    const suitKeys = Object.keys(handSortedBySuit.spades);
     let totalSameRanks = [];
-    for (let index = 0; index < Object.keys(spades).length - 2; index++) {
+    for (let index = 0; index < suitKeys.length - 2; index++) {
+        const key = suitKeys[index]; 
         let suitSameRanks = 0;
-        if (Object.values(spades)[index] > 0) {
+        if (handSortedBySuit.spades[key] > 0) {
             suitSameRanks++;
-        } if (Object.values(hearts)[index] > 0) {
+        } if (handSortedBySuit.hearts[key] > 0) {
             suitSameRanks++;
-        } if (Object.values(clubs)[index] > 0) {
+        } if (handSortedBySuit.clubs[key] > 0) {
             suitSameRanks++;
-        } if (Object.values(diamonds)[index] > 0) {
+        } if (handSortedBySuit.diamonds[key] > 0) {
             suitSameRanks++;
         } if (suitSameRanks > 1) {
             totalSameRanks.push(suitSameRanks);
@@ -131,19 +126,19 @@ function fullHouseChecker(suitsSameRanks) {
     return false
 }
 
-function flushChecker() {
-    let suits = [clubs, diamonds, hearts, spades];
+function flushChecker(handSortedBySuit) {
+    let keys = Object.keys(handSortedBySuit);
     let hasFlush = false;
-    suits.forEach(suit => {
-        if (suit.total > 4) {                
+    keys.forEach(suit => {
+        if (handSortedBySuit[suit].total > 4) {                
             hasFlush = true;                
         }
     });
     return hasFlush;
 }
 
-function straightChecker() {
-    const sortedRanks = sortByRank();
+function straightChecker(handSortedBySuit) {
+    const sortedRanks = sortByRank(handSortedBySuit);
     const sortedRanksNoDuplicates = [...new Set(sortedRanks)];
     const sortedNumericalRanksNoDuplicates = convertRankToNumber(sortedRanksNoDuplicates);
     const consecutiveRanks = findConsecutiveRanks(sortedNumericalRanksNoDuplicates);
@@ -240,19 +235,19 @@ function convertNumericalRankToSymbol(ranks) {
     return convertedRankList;
 }
 
-function sortByRank() {
+function sortByRank(handSortedBySuit) {
+    let keys = Object.keys(handSortedBySuit);
     let ranks = [];
-    let suits = [clubs, diamonds, hearts, spades];
-    suits.forEach(suit => {
-        let numericalList = convertRanksToSortedNumericalList(suit);
+    keys.forEach(suit => {
+        let numericalList = convertRanksToSortedNumericalList(handSortedBySuit[suit]);
         ranks = ranks.concat(numericalList);           
     });
     ranks.sort(function(a, b){return b - a});
     return convertNumericalRankToSymbol(ranks);
 }
 
-function printWinner(type) {
-    const ranksList = sortByRank();
+function printWinner(type, handSortedBySuit) {
+    const ranksList = sortByRank(handSortedBySuit);
     const ranks = [...new Set(ranksList)];
     return {type:type, ranks};
 }
