@@ -264,6 +264,7 @@ module.exports = {
     sameRankCounter,
     findConsecutiveRanks,
     convertRanksToSortedNumericalList,
+    convertRankToNumber,
     convertNumericalRankToSymbol,
     sortByRank,
     printWinner
