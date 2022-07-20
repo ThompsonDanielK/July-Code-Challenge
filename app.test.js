@@ -87,3 +87,71 @@ describe("findWinningHands Unit Tests", () => {
         expect(app.findWinningHands(ops)).toEqual({type: "Straight", ranks: ["K", "Q", "J", "A", "10", "2"]});
     });
 });
+
+describe("straightFlushChecker Unit Tests", () => {
+    test('Positive Case', () => {
+        let ops = {
+            clubs:{2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]},
+            diamonds:{2:0, 3:1, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            hearts:{2:1, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            spades:{2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:1, "A":1, "J":1, "Q":1, "K":1, total:5, consecutiveRanks:["K", "Q", "J", "A", "10"]}
+        };
+        expect(app.straightFlushChecker(ops)).toBeTruthy();
+    });
+
+    test('Negative Case', () => {
+        let ops = {
+            clubs:{2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]},
+            diamonds:{2:0, 3:1, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            hearts:{2:1, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            spades:{2:0, 3:0, 4:0, 5:1, 6:0, 7:0, 8:0, 9:0, 10:1, "A":1, "J":1, "Q":1, "K":0, total:5, consecutiveRanks:["Q", "J", "A", "10"]}
+        };
+        expect(app.straightFlushChecker(ops)).toBeFalsy();
+    });
+});
+
+describe("fullHouseChecker Unit Tests", () => {
+    test('Positive Case', () => {
+        let ops = [3, 2];
+        expect(app.fullHouseChecker(ops)).toBeTruthy();
+    });
+
+    test('Negative Case', () => {
+        let ops = [3];
+        expect(app.fullHouseChecker(ops)).toBeFalsy();
+    });
+});
+
+describe("straightChecker Unit Tests", () => {
+    test('Positive Case', () => {
+        let ops = {
+            clubs:{2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":1, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            diamonds:{2:0, 3:1, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            hearts:{2:1, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            spades:{2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:1, "A":0, "J":1, "Q":1, "K":1, total:5, consecutiveRanks:["K", "Q", "J", "10"]}
+        };
+        expect(app.straightChecker(ops)).toBeTruthy();
+    });
+
+    test('Negative Case', () => {
+        let ops = {
+            clubs:{2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]},
+            diamonds:{2:0, 3:1, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            hearts:{2:1, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:1, consecutiveRanks:[]},
+            spades:{2:0, 3:0, 4:0, 5:1, 6:0, 7:0, 8:0, 9:0, 10:1, "A":1, "J":1, "Q":1, "K":0, total:5, consecutiveRanks:["Q", "J", "A", "10"]}
+        };
+        expect(app.straightChecker(ops)).toBeFalsy();
+    });
+});
+
+describe("twoPairChecker Unit Tests", () => {
+    test('Positive Case', () => {
+        let ops = [2, 2];
+        expect(app.twoPairChecker(ops)).toBeTruthy();
+    });
+
+    test('Negative Case', () => {
+        let ops = [3];
+        expect(app.twoPairChecker(ops)).toBeFalsy();
+    });
+});

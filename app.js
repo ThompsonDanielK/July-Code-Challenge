@@ -152,8 +152,6 @@ function sameRankCounter(handSortedBySuit) {
     return totalSameRanks;
 }
 
-
-
 function findConsecutiveRanks(sortedNumericalRankList) {
     let consecutiveRanks = [];
     let longestConsecutiveRanks = [];    
@@ -259,10 +257,11 @@ module.exports = {
     countCards,
     findWinningHands,
     straightFlushChecker,
-    sameRankCounter,
     fullHouseChecker,
     flushChecker,
     straightChecker,
+    twoPairChecker,
+    sameRankCounter,
     findConsecutiveRanks,
     convertRanksToSortedNumericalList,
     convertNumericalRankToSymbol,
