@@ -1,5 +1,5 @@
 function hand(holeCards, comCards) {
-    const suit = {1:0, 2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
+    const suit = {2:0, 3:0, 4:0, 5:0, 6:0, 7:0, 8:0, 9:0, 10:0, "A":0, "J":0, "Q":0, "K":0, total:0, consecutiveRanks:[]};
     const allCards = holeCards.concat(comCards);
     let handSortedBySuit = {clubs:{...suit}, diamonds:{...suit}, hearts:{...suit}, spades:{...suit}};
     handSortedBySuit = countCards(allCards, handSortedBySuit);
@@ -60,30 +60,19 @@ function findWinningHands(handSortedBySuit) {
                 return printWinner("Flush", handSortedBySuit);                   
             } else if (straightChecker(handSortedBySuit)) {
                 return printWinner("Straight", handSortedBySuit);
+            } else if (twoPairChecker(suitSameRanks)) {
+                return printWinner("Two Pair", handSortedBySuit);
             } else {
-                if (suitSameRanks.length > 1) {
-                    let numberOfPairs = 0;
-                    for (let index = 0; index < suitSameRanks.length; index++) {
-                        if (suitSameRanks[index] == 2) {
-                            numberOfPairs++;
-                        }
-                        if (numberOfPairs > 1) {
-                            return printWinner("Two Pair", handSortedBySuit);
-                        }
-                    }
-                } else {
                     return printWinner("Pair", handSortedBySuit);
-                }
-            }
+                }            
         default:
-            break;
-    }
-    if (flushChecker(handSortedBySuit)) {
-        return printWinner("Flush", handSortedBySuit);                   
-    } else if (straightChecker(handSortedBySuit)) {
-        return printWinner("Straight", handSortedBySuit);
-    }
-    return printWinner("High Card", handSortedBySuit);
+            if (flushChecker(handSortedBySuit)) {
+                return printWinner("Flush", handSortedBySuit);                   
+            } else if (straightChecker(handSortedBySuit)) {
+                return printWinner("Straight", handSortedBySuit);
+            }
+            return printWinner("High Card", handSortedBySuit);
+    }    
 }
 
 function straightFlushChecker(handSortedBySuit) {
@@ -96,27 +85,6 @@ function straightFlushChecker(handSortedBySuit) {
         }
     }
     return false;
-}
-
-function sameRankCounter(handSortedBySuit) {
-    const suitKeys = Object.keys(handSortedBySuit.spades);
-    let totalSameRanks = [];
-    for (let index = 0; index < suitKeys.length - 2; index++) {
-        const key = suitKeys[index]; 
-        let suitSameRanks = 0;
-        if (handSortedBySuit.spades[key] > 0) {
-            suitSameRanks++;
-        } if (handSortedBySuit.hearts[key] > 0) {
-            suitSameRanks++;
-        } if (handSortedBySuit.clubs[key] > 0) {
-            suitSameRanks++;
-        } if (handSortedBySuit.diamonds[key] > 0) {
-            suitSameRanks++;
-        } if (suitSameRanks > 1) {
-            totalSameRanks.push(suitSameRanks);
-        }
-    }
-    return totalSameRanks;
 }
 
 function fullHouseChecker(suitsSameRanks) {
@@ -148,17 +116,51 @@ function straightChecker(handSortedBySuit) {
     return false;
 }
 
+function twoPairChecker(suitSameRanks) {
+    if (suitSameRanks.length > 1) {
+        let numberOfPairs = 0;
+        for (let index = 0; index < suitSameRanks.length; index++) {
+            if (suitSameRanks[index] == 2) {
+                numberOfPairs++;
+            }
+            if (numberOfPairs > 1) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function sameRankCounter(handSortedBySuit) {
+    const suitKeys = Object.keys(handSortedBySuit.spades);
+    let totalSameRanks = [];
+    for (let index = 0; index < suitKeys.length - 2; index++) {
+        const key = suitKeys[index]; 
+        let suitSameRanks = 0;
+        if (handSortedBySuit.spades[key] > 0) {
+            suitSameRanks++;
+        } if (handSortedBySuit.hearts[key] > 0) {
+            suitSameRanks++;
+        } if (handSortedBySuit.clubs[key] > 0) {
+            suitSameRanks++;
+        } if (handSortedBySuit.diamonds[key] > 0) {
+            suitSameRanks++;
+        } if (suitSameRanks > 1) {
+            totalSameRanks.push(suitSameRanks);
+        }
+    }
+    return totalSameRanks;
+}
+
+
+
 function findConsecutiveRanks(sortedNumericalRankList) {
     let consecutiveRanks = [];
     let longestConsecutiveRanks = [];    
-    for (let index = 0; index < sortedNumericalRankList.length; index++) {
-        if (index == sortedNumericalRankList.length - 1 && parseInt(sortedNumericalRankList[index - 1]) == parseInt(sortedNumericalRankList[index]) - 1) {
-            consecutiveRanks.push(sortedNumericalRankList[index]);
-        } else if (index === 0 && parseInt(sortedNumericalRankList[index + 1]) == parseInt(sortedNumericalRankList[index]) - 1) {
-            consecutiveRanks.push(sortedNumericalRankList[index]);
-        } else if (index < sortedNumericalRankList.length - 2 && 
-                    parseInt(sortedNumericalRankList[index - 1]) == parseInt(sortedNumericalRankList[index]) + 1 ||
-                    parseInt(sortedNumericalRankList[index + 1]) == parseInt(sortedNumericalRankList[index]) - 1) {
+    for (let index = 0; index < sortedNumericalRankList.length; index++) { 
+        if ((index == 0 && (sortedNumericalRankList[index] == sortedNumericalRankList[index + 1] + 1))
+            || (index == sortedNumericalRankList.length - 1 && (sortedNumericalRankList[index] == sortedNumericalRankList[index - 1] - 1))
+            || (sortedNumericalRankList[index] == sortedNumericalRankList[index - 1] - 1)) {
             consecutiveRanks.push(sortedNumericalRankList[index]);
         } else {
             consecutiveRanks = [];
@@ -203,7 +205,7 @@ function convertRankToNumber(ranks) {
                 numberRank = 14;
                 break;
             default:
-                numberRank = rank;
+                numberRank = parseInt(rank);
         }
         rankList.push(numberRank);
     });
